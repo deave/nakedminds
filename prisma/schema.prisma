@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+enum NotificationType {
+  COMMENT
+  MESSAGE
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  displayName  String
+  bio          String?
+  avatarUrl    String?
+  role         Role     @default(MEMBER)
+  onboarded    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  monthlyEntries            MonthlyEntry[]
+  comments                  Comment[]
+  conversationParticipants  ConversationParticipant[]
+  sentMessages              Message[]
+  notifications             Notification[]
+  invitesSent               Invite[]
+
+  @@map("users")
+}
+
+model MonthlyEntry {
+  id             String   @id @default(uuid())
+  userId         String
+  year           Int
+  month          Int
+  habitAdopt     String
+  habitRemove    String
+  focusChallenge String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments Comment[]
+
+  @@unique([userId, year, month])
+  @@index([year, month])
+  @@map("monthly_entries")
+}
+
+model Comment {
+  id             String   @id @default(uuid())
+  authorId       String
+  monthlyEntryId String
+  body           String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  author       User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  monthlyEntry MonthlyEntry @relation(fields: [monthlyEntryId], references: [id], onDelete: Cascade)
+
+  @@index([monthlyEntryId])
+  @@map("comments")
+}
+
+model Conversation {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  participants ConversationParticipant[]
+  messages     Message[]
+
+  @@map("conversations")
+}
+
+model ConversationParticipant {
+  conversationId String
+  userId         String
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([conversationId, userId])
+  @@map("conversation_participants")
+}
+
+model Message {
+  id             String    @id @default(uuid())
+  conversationId String
+  senderId       String
+  body           String
+  createdAt      DateTime  @default(now())
+  readAt         DateTime?
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+  @@map("messages")
+}
+
+model Notification {
+  id          String           @id @default(uuid())
+  userId      String
+  type        NotificationType
+  referenceId String
+  read        Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+  @@map("notifications")
+}
+
+model Invite {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  token     String   @unique @default(uuid())
+  invitedBy String
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  inviter User @relation(fields: [invitedBy], references: [id], onDelete: Cascade)
+
+  @@map("invites")
+}
