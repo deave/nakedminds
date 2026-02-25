@@ -7,7 +7,6 @@ const registerSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8, "Password must be at least 8 characters"),
   displayName: z.string().min(1, "Display name is required").max(50),
-  token: z.string().uuid("Invalid invite token"),
 });
 
 export async function POST(req: NextRequest) {
@@ -22,19 +21,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { email, password, displayName, token } = parsed.data;
-
-    // Verify invite token
-    const invite = await prisma.invite.findUnique({
-      where: { token },
-    });
-
-    if (!invite || invite.used || invite.email !== email) {
-      return NextResponse.json(
-        { error: "Invalid or expired invite" },
-        { status: 400 }
-      );
-    }
+    const { email, password, displayName } = parsed.data;
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
@@ -50,21 +37,12 @@ export async function POST(req: NextRequest) {
 
     const passwordHash = await hash(password, 12);
 
-    const user = await prisma.$transaction(async (tx) => {
-      const newUser = await tx.user.create({
-        data: {
-          email,
-          passwordHash,
-          displayName,
-        },
-      });
-
-      await tx.invite.update({
-        where: { id: invite.id },
-        data: { used: true },
-      });
-
-      return newUser;
+    const user = await prisma.user.create({
+      data: {
+        email,
+        passwordHash,
+        displayName,
+      },
     });
 
     return NextResponse.json(

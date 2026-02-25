@@ -114,9 +114,9 @@ export default function SignInPage() {
           </form>
 
           <p className="text-center text-sm text-stone-500 mt-4">
-            Have an invite?{" "}
+            Don&apos;t have an account?{" "}
             <Link href="/register" className="text-brand-600 hover:underline">
-              Create your account
+              Create one
             </Link>
           </p>
         </div>
