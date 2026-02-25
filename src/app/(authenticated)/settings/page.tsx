@@ -10,14 +10,6 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  // Admin invite state
-  const [inviteEmail, setInviteEmail] = useState("");
-  const [inviteResult, setInviteResult] = useState<{
-    message: string;
-    inviteLink?: string;
-  } | null>(null);
-  const [inviting, setInviting] = useState(false);
-
   useEffect(() => {
     if (session?.user) {
       setDisplayName(session.user.name || "");
@@ -54,35 +46,6 @@ export default function SettingsPage() {
       }
     } catch {}
     setSaving(false);
-  };
-
-  const handleInvite = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setInviting(true);
-    setInviteResult(null);
-
-    try {
-      const res = await fetch("/api/admin/invite", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: inviteEmail }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setInviteResult({
-          message: "Invite created!",
-          inviteLink: data.inviteLink,
-        });
-        setInviteEmail("");
-      } else {
-        setInviteResult({ message: data.error });
-      }
-    } catch {
-      setInviteResult({ message: "Something went wrong" });
-    }
-    setInviting(false);
   };
 
   return (
@@ -128,49 +91,6 @@ export default function SettingsPage() {
           </div>
         </form>
       </div>
-
-      {/* Admin: Invite */}
-      {session?.user?.role === "ADMIN" && (
-        <div className="card p-6">
-          <h2 className="text-base font-semibold text-stone-800 mb-1">
-            Invite a member
-          </h2>
-          <p className="text-sm text-stone-500 mb-4">
-            Send an invite link to someone you&apos;d like in the Circle.
-          </p>
-          <form onSubmit={handleInvite} className="space-y-3">
-            <input
-              type="email"
-              value={inviteEmail}
-              onChange={(e) => setInviteEmail(e.target.value)}
-              className="input"
-              placeholder="their@email.com"
-              required
-            />
-            <button type="submit" disabled={inviting} className="btn-primary">
-              {inviting ? "Creating invite..." : "Create invite link"}
-            </button>
-          </form>
-
-          {inviteResult && (
-            <div className="mt-3 p-3 rounded-lg bg-surface-50 border border-stone-200">
-              <p className="text-sm text-stone-700 mb-1">
-                {inviteResult.message}
-              </p>
-              {inviteResult.inviteLink && (
-                <div className="mt-2">
-                  <p className="text-xs text-stone-500 mb-1">
-                    Share this link with them:
-                  </p>
-                  <code className="text-xs bg-stone-100 px-2 py-1 rounded block break-all">
-                    {inviteResult.inviteLink}
-                  </code>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
 
       {/* Logout */}
       <div className="card p-6">

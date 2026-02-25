@@ -21,7 +21,6 @@ async function main() {
     },
   });
 
-  // Create a few member invites (pre-used, with members)
   const memberPassword = await hash("password123", 12);
 
   const alice = await prisma.user.upsert({
@@ -119,24 +118,12 @@ async function main() {
     skipDuplicates: true,
   });
 
-  // Create an unused invite for testing
-  await prisma.invite.upsert({
-    where: { email: "newmember@example.com" },
-    update: {},
-    create: {
-      email: "newmember@example.com",
-      invitedBy: admin.id,
-    },
-  });
-
   console.log("Seed complete!");
   console.log("---");
   console.log("Test accounts (all password: password123):");
   console.log("  Admin: admin@nakedminds.app");
   console.log("  Member: alice@example.com");
   console.log("  Member: bob@example.com");
-  console.log("---");
-  console.log("Unused invite for: newmember@example.com");
 }
 
 main()

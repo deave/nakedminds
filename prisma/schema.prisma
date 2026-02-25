@@ -35,8 +35,6 @@ model User {
   conversationParticipants  ConversationParticipant[]
   sentMessages              Message[]
   notifications             Notification[]
-  invitesSent               Invite[]
-
   @@map("users")
 }
 
@@ -125,15 +123,3 @@ model Notification {
   @@map("notifications")
 }
 
-model Invite {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  token     String   @unique @default(uuid())
-  invitedBy String
-  used      Boolean  @default(false)
-  createdAt DateTime @default(now())
-
-  inviter User @relation(fields: [invitedBy], references: [id], onDelete: Cascade)
-
-  @@map("invites")
-}

@@ -1,14 +1,12 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState, Suspense } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import Link from "next/link";
 
-function RegisterForm() {
+export default function RegisterPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [email, setEmail] = useState(searchParams.get("email") || "");
-  const [token, setToken] = useState(searchParams.get("token") || "");
+  const [email, setEmail] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -23,7 +21,7 @@ function RegisterForm() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, displayName, token }),
+        body: JSON.stringify({ email, password, displayName }),
       });
 
       const data = await res.json();
@@ -60,20 +58,6 @@ function RegisterForm() {
                 {error}
               </div>
             )}
-
-            <div>
-              <label className="block text-sm font-medium text-stone-700 mb-1">
-                Invite token
-              </label>
-              <input
-                type="text"
-                value={token}
-                onChange={(e) => setToken(e.target.value)}
-                className="input"
-                placeholder="Paste your invite token"
-                required
-              />
-            </div>
 
             <div>
               <label className="block text-sm font-medium text-stone-700 mb-1">
@@ -137,19 +121,5 @@ function RegisterForm() {
         </div>
       </div>
     </div>
-  );
-}
-
-export default function RegisterPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin h-8 w-8 border-2 border-brand-600 border-t-transparent rounded-full" />
-        </div>
-      }
-    >
-      <RegisterForm />
-    </Suspense>
   );
 }
