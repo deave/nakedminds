@@ -5,9 +5,12 @@ import { requireAuth } from "@/lib/api-helpers";
 import { getCurrentMonth } from "@/lib/month";
 
 const createEntrySchema = z.object({
-  habitAdopt: z.string().min(1, "Please describe the habit you want to adopt").max(200),
-  habitRemove: z.string().min(1, "Please describe the habit you want to remove").max(200),
-  focusChallenge: z.string().min(1, "Please describe your focus challenge").max(1000),
+  oneThing: z.string().min(1, "Please describe your ONE thing").max(200),
+  keyActions: z.string().min(1, "Please list your key actions").max(500),
+  firstStep: z.string().min(1, "Please describe your first step").max(200),
+  timeBlockDay: z.string().min(1, "Please specify which day").max(100),
+  timeBlockTime: z.string().min(1, "Please specify what time").max(100),
+  definitionOfProgress: z.string().min(1, "Please define your progress").max(500),
 });
 
 export async function POST(req: NextRequest) {

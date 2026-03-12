@@ -2,7 +2,7 @@
 
 ## MVP Definition
 
-Naked Minds Circle is a private, invite-only web app where a small group of people track personal growth together. Each month, every member commits to **one habit to adopt**, **one habit to remove**, and **one focus challenge** they're working through. Everyone in the Circle can see everyone else's commitments, leave supportive comments, and send direct messages. The goal is radical transparency and gentle accountability — no gamification, no metrics dashboards, just honest humans helping each other grow.
+Naked Minds Circle is a private, invite-only web app where a small group of people track personal growth together. Each month, every member sets their **ONE Thing** (the single goal they want to move forward), defines **Key Actions**, commits to a **First Step**, blocks **Time** for focused work, and sets a **Definition of Progress**. Everyone in the Circle can see everyone else's monthly focus, leave supportive comments, and send direct messages. The goal is radical transparency and gentle accountability — no gamification, no metrics dashboards, just honest humans helping each other grow.
 
 **Stack decision:** Next.js 14 (App Router) + TypeScript + Tailwind CSS + Prisma + PostgreSQL + NextAuth.js. This gives us type safety end-to-end, excellent DX with Prisma, built-in API routes via Next.js, and a mature auth solution without vendor lock-in.
 
@@ -16,7 +16,7 @@ Naked Minds Circle is a private, invite-only web app where a small group of peop
 |------|-------|---------|
 | Landing / Sign In | `/` | Auth gate — sign in or request access |
 | Onboarding | `/onboarding` | First-time setup: display name, bio |
-| Set Monthly Focus | `/monthly-setup` | Wizard: pick adopt habit, remove habit, focus challenge |
+| Set Monthly Focus | `/monthly-setup` | Wizard: ONE Thing, Key Actions, First Step, Time Block, Definition of Progress |
 | Circle Feed | `/feed` | All members' current month at a glance |
 | Member Profile | `/members/[id]` | One member's current + history + comments |
 | DM Inbox | `/messages` | List of conversations |
@@ -31,18 +31,17 @@ Naked Minds Circle is a private, invite-only web app where a small group of peop
 - As an invited user, I receive an email with a sign-up link
 - As a member, I can only access the app if I belong to the Circle
 
-**Monthly Habit Focus**
-- As a member, I can set exactly 1 habit to adopt this month
-- As a member, I can set exactly 1 habit to remove this month
-- As a member, I cannot change previous months' selections
-- As a member, I can reuse a habit from a prior month
+**Monthly Focus**
+- As a member, I set my ONE Thing (single goal) for the month
+- As a member, I define 2-3 Key Actions to move it forward
+- As a member, I commit to a First Step for this week
+- As a member, I block specific Time (day + time) for focused work
+- As a member, I set a Definition of Progress to know if I succeeded
+- As a member, I cannot change previous months' entries
 - As a member, I can view my month-by-month history
-
-**Monthly Focus Challenge**
-- As a member, I can write 1 focus challenge for this month
-- As a member, I can see everyone else's focus challenges
-- As a member, I can leave a comment on any focus challenge
-- As a member, I can DM someone about their focus challenge
+- As a member, I can see everyone else's monthly focus
+- As a member, I can leave a comment on any monthly focus
+- As a member, I can DM someone about their focus
 
 **Feed & Profiles**
 - As a member, I see a feed of all members' current month data
@@ -103,9 +102,12 @@ MonthlyEntry
 ├── userId (FK → User)
 ├── year (int)
 ├── month (int, 1-12)
-├── habitAdopt (text)
-├── habitRemove (text)
-├── focusChallenge (text)
+├── oneThing (text)
+├── keyActions (text)
+├── firstStep (text)
+├── timeBlockDay (text)
+├── timeBlockTime (text)
+├── definitionOfProgress (text)
 ├── createdAt
 └── updatedAt
 └── UNIQUE(userId, year, month)
@@ -237,10 +239,12 @@ RootLayout
 
 /monthly-setup
 └── MonthlySetupWizard
-    ├── Step1_HabitAdopt
-    ├── Step2_HabitRemove
-    ├── Step3_FocusChallenge
-    └── Step4_Review
+    ├── Step1_OneThing
+    ├── Step2_KeyActions
+    ├── Step3_FirstStep
+    ├── Step4_TimeBlock (Day + Time)
+    ├── Step5_DefinitionOfProgress
+    └── Step6_Review
 
 /feed
 └── CircleFeed
@@ -248,9 +252,11 @@ RootLayout
     └── MemberCardList
         └── MemberCard
             ├── Avatar + Name
-            ├── HabitAdoptBadge
-            ├── HabitRemoveBadge
-            ├── FocusChallengePreview
+            ├── OneThingHeadline
+            ├── KeyActionsDetail
+            ├── FirstStepDetail
+            ├── TimeBlockDetail
+            ├── DefinitionOfProgressDetail
             ├── CommentCount
             └── EncourageButton
 
@@ -258,15 +264,17 @@ RootLayout
 └── MemberProfile
     ├── ProfileHeader (avatar, name, bio, DM button)
     ├── CurrentMonthSection
-    │   ├── HabitAdopt
-    │   ├── HabitRemove
-    │   └── FocusChallenge
+    │   ├── OneThing
+    │   ├── KeyActions
+    │   ├── FirstStep
+    │   ├── TimeBlock
+    │   └── DefinitionOfProgress
     ├── CommentsSection
     │   ├── CommentList
     │   │   └── CommentItem (author, body, timestamp)
     │   └── CommentForm
     └── MonthTimeline
-        └── TimelineEntry (month, habits, focus)
+        └── TimelineEntry (month, ONE Thing, actions, progress)
 
 /messages
 └── InboxView
@@ -316,7 +324,7 @@ Toast — Success/error notifications
 - Basic layout shell with nav
 
 ### Milestone 2 — Core Monthly Flow
-- Monthly setup wizard (adopt, remove, focus)
+- Monthly setup wizard (ONE Thing, Key Actions, First Step, Time Block, Definition of Progress)
 - Month enforcement logic (one per month, read-only past)
 - Monthly entry API routes
 - "Set your monthly focus" banner
@@ -324,7 +332,7 @@ Toast — Success/error notifications
 ### Milestone 3 — Feed & Profiles
 - Circle Feed page with all member cards
 - Member Profile page with current month + history
-- Comments on focus challenges
+- Comments on monthly focus entries
 - In-app notifications for comments
 
 ### Milestone 4 — Direct Messages

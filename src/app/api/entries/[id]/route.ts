@@ -5,9 +5,12 @@ import { requireAuth } from "@/lib/api-helpers";
 import { isCurrentMonth } from "@/lib/month";
 
 const updateEntrySchema = z.object({
-  habitAdopt: z.string().min(1).max(200).optional(),
-  habitRemove: z.string().min(1).max(200).optional(),
-  focusChallenge: z.string().min(1).max(1000).optional(),
+  oneThing: z.string().min(1).max(200).optional(),
+  keyActions: z.string().min(1).max(500).optional(),
+  firstStep: z.string().min(1).max(200).optional(),
+  timeBlockDay: z.string().min(1).max(100).optional(),
+  timeBlockTime: z.string().min(1).max(100).optional(),
+  definitionOfProgress: z.string().min(1).max(500).optional(),
 });
 
 export async function GET(

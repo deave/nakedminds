@@ -8,9 +8,12 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 export default function MonthlySetupPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
-  const [habitAdopt, setHabitAdopt] = useState("");
-  const [habitRemove, setHabitRemove] = useState("");
-  const [focusChallenge, setFocusChallenge] = useState("");
+  const [oneThing, setOneThing] = useState("");
+  const [keyActions, setKeyActions] = useState("");
+  const [firstStep, setFirstStep] = useState("");
+  const [timeBlockDay, setTimeBlockDay] = useState("");
+  const [timeBlockTime, setTimeBlockTime] = useState("");
+  const [definitionOfProgress, setDefinitionOfProgress] = useState("");
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
   const [existingEntry, setExistingEntry] = useState<any>(null);
@@ -31,9 +34,12 @@ export default function MonthlySetupPage() {
           );
           if (existing) {
             setExistingEntry(existing);
-            setHabitAdopt(existing.habitAdopt);
-            setHabitRemove(existing.habitRemove);
-            setFocusChallenge(existing.focusChallenge);
+            setOneThing(existing.oneThing);
+            setKeyActions(existing.keyActions);
+            setFirstStep(existing.firstStep);
+            setTimeBlockDay(existing.timeBlockDay);
+            setTimeBlockTime(existing.timeBlockTime);
+            setDefinitionOfProgress(existing.definitionOfProgress);
           }
         }
       } catch {}
@@ -53,7 +59,7 @@ export default function MonthlySetupPage() {
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ habitAdopt, habitRemove, focusChallenge }),
+        body: JSON.stringify({ oneThing, keyActions, firstStep, timeBlockDay, timeBlockTime, definitionOfProgress }),
       });
 
       if (res.ok) {
@@ -72,13 +78,13 @@ export default function MonthlySetupPage() {
           {existingEntry ? "Edit" : "Set"} your {monthLabel} focus
         </h1>
         <p className="text-sm text-stone-500">
-          Choose one habit to build, one to let go, and one challenge to face.
+          Plan your month with focus and intention.
         </p>
       </div>
 
       {/* Progress */}
       <div className="flex gap-2 mb-6">
-        {[1, 2, 3, 4].map((s) => (
+        {[1, 2, 3, 4, 5, 6].map((s) => (
           <div
             key={s}
             className={`h-1 flex-1 rounded-full transition-colors ${
@@ -92,25 +98,24 @@ export default function MonthlySetupPage() {
         {step === 1 && (
           <div className="space-y-4">
             <div>
-              <div className="badge-adopt mb-3">Adopt</div>
+              <div className="text-xs font-semibold text-brand-600 uppercase tracking-wide mb-3">1. ONE Thing</div>
               <h2 className="text-lg font-semibold text-stone-800 mb-1">
-                What habit do you want to build?
+                What is the ONE thing you want to move forward this month?
               </h2>
-              <p className="text-sm text-stone-500 mb-4">
-                Pick one habit you&apos;d like to make part of your life this
-                month. Keep it specific and achievable.
+              <p className="text-sm text-stone-500 italic mb-4">
+                (One short sentence.)
               </p>
               <textarea
-                value={habitAdopt}
-                onChange={(e) => setHabitAdopt(e.target.value)}
+                value={oneThing}
+                onChange={(e) => setOneThing(e.target.value)}
                 className="textarea h-20"
-                placeholder="e.g., Meditate for 10 minutes every morning"
+                placeholder="e.g., Launch the new product landing page"
                 maxLength={200}
               />
             </div>
             <button
               onClick={() => setStep(2)}
-              disabled={!habitAdopt.trim()}
+              disabled={!oneThing.trim()}
               className="btn-primary w-full"
             >
               Next
@@ -121,20 +126,16 @@ export default function MonthlySetupPage() {
         {step === 2 && (
           <div className="space-y-4">
             <div>
-              <div className="badge-remove mb-3">Remove</div>
+              <div className="text-xs font-semibold text-brand-600 uppercase tracking-wide mb-3">2. Key Actions</div>
               <h2 className="text-lg font-semibold text-stone-800 mb-1">
-                What habit do you want to let go?
+                What 2–3 actions will move this forward?
               </h2>
-              <p className="text-sm text-stone-500 mb-4">
-                Pick one habit that&apos;s holding you back. Be honest with
-                yourself.
-              </p>
               <textarea
-                value={habitRemove}
-                onChange={(e) => setHabitRemove(e.target.value)}
-                className="textarea h-20"
-                placeholder="e.g., Scrolling social media before bed"
-                maxLength={200}
+                value={keyActions}
+                onChange={(e) => setKeyActions(e.target.value)}
+                className="textarea h-28"
+                placeholder="e.g., 1. Write the copy&#10;2. Design the layout&#10;3. Set up analytics"
+                maxLength={500}
               />
             </div>
             <div className="flex gap-3">
@@ -143,7 +144,7 @@ export default function MonthlySetupPage() {
               </button>
               <button
                 onClick={() => setStep(3)}
-                disabled={!habitRemove.trim()}
+                disabled={!keyActions.trim()}
                 className="btn-primary flex-1"
               >
                 Next
@@ -155,21 +156,16 @@ export default function MonthlySetupPage() {
         {step === 3 && (
           <div className="space-y-4">
             <div>
-              <div className="badge-focus mb-3">Focus challenge</div>
+              <div className="text-xs font-semibold text-brand-600 uppercase tracking-wide mb-3">3. First Step</div>
               <h2 className="text-lg font-semibold text-stone-800 mb-1">
-                What are you working through?
+                What is the first step you will take this week?
               </h2>
-              <p className="text-sm text-stone-500 mb-4">
-                Describe the one thing you&apos;re focused on this month that
-                feels difficult or important. Your Circle will see this and can
-                offer support.
-              </p>
               <textarea
-                value={focusChallenge}
-                onChange={(e) => setFocusChallenge(e.target.value)}
-                className="textarea h-28"
-                placeholder="e.g., I'm working on having difficult conversations instead of avoiding them. I tend to shut down when things get uncomfortable..."
-                maxLength={1000}
+                value={firstStep}
+                onChange={(e) => setFirstStep(e.target.value)}
+                className="textarea h-20"
+                placeholder="e.g., Draft the hero section copy by Wednesday"
+                maxLength={200}
               />
             </div>
             <div className="flex gap-3">
@@ -178,7 +174,84 @@ export default function MonthlySetupPage() {
               </button>
               <button
                 onClick={() => setStep(4)}
-                disabled={!focusChallenge.trim()}
+                disabled={!firstStep.trim()}
+                className="btn-primary flex-1"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 4 && (
+          <div className="space-y-4">
+            <div>
+              <div className="text-xs font-semibold text-brand-600 uppercase tracking-wide mb-3">4. Time Block</div>
+              <h2 className="text-lg font-semibold text-stone-800 mb-1">
+                When will you protect time to work on this?
+              </h2>
+              <div className="space-y-3 mt-4">
+                <div>
+                  <label className="text-sm font-medium text-stone-700 mb-1 block">Day</label>
+                  <input
+                    type="text"
+                    value={timeBlockDay}
+                    onChange={(e) => setTimeBlockDay(e.target.value)}
+                    className="input"
+                    placeholder="e.g., Monday, Every weekday morning"
+                    maxLength={100}
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-stone-700 mb-1 block">Time</label>
+                  <input
+                    type="text"
+                    value={timeBlockTime}
+                    onChange={(e) => setTimeBlockTime(e.target.value)}
+                    className="input"
+                    placeholder="e.g., 9:00 AM, After lunch"
+                    maxLength={100}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setStep(3)} className="btn-secondary flex-1">
+                Back
+              </button>
+              <button
+                onClick={() => setStep(5)}
+                disabled={!timeBlockDay.trim() || !timeBlockTime.trim()}
+                className="btn-primary flex-1"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 5 && (
+          <div className="space-y-4">
+            <div>
+              <div className="text-xs font-semibold text-brand-600 uppercase tracking-wide mb-3">5. Definition of Progress</div>
+              <h2 className="text-lg font-semibold text-stone-800 mb-1">
+                How will you know you made progress this month?
+              </h2>
+              <textarea
+                value={definitionOfProgress}
+                onChange={(e) => setDefinitionOfProgress(e.target.value)}
+                className="textarea h-28"
+                placeholder="e.g., The landing page is live and getting traffic"
+                maxLength={500}
+              />
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setStep(4)} className="btn-secondary flex-1">
+                Back
+              </button>
+              <button
+                onClick={() => setStep(6)}
+                disabled={!definitionOfProgress.trim()}
                 className="btn-primary flex-1"
               >
                 Review
@@ -187,31 +260,29 @@ export default function MonthlySetupPage() {
           </div>
         )}
 
-        {step === 4 && (
+        {step === 6 && (
           <div className="space-y-4">
             <h2 className="text-lg font-semibold text-stone-800 mb-3">
-              Review your {monthLabel} focus
+              Review your {monthLabel} plan
             </h2>
 
             <div className="space-y-3">
-              <div className="p-3 rounded-lg bg-brand-50 border border-brand-200">
-                <div className="badge-adopt mb-1">Adopt</div>
-                <p className="text-sm text-stone-800">{habitAdopt}</p>
-              </div>
-
-              <div className="p-3 rounded-lg bg-red-50 border border-red-200">
-                <div className="badge-remove mb-1">Remove</div>
-                <p className="text-sm text-stone-800">{habitRemove}</p>
-              </div>
-
-              <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
-                <div className="badge-focus mb-1">Focus challenge</div>
-                <p className="text-sm text-stone-800">{focusChallenge}</p>
-              </div>
+              {[
+                { label: "ONE Thing", value: oneThing },
+                { label: "Key Actions", value: keyActions },
+                { label: "First Step", value: firstStep },
+                { label: "Time Block", value: `${timeBlockDay} — ${timeBlockTime}` },
+                { label: "Definition of Progress", value: definitionOfProgress },
+              ].map((item) => (
+                <div key={item.label} className="p-3 rounded-lg bg-stone-50 border border-stone-200">
+                  <div className="text-xs font-semibold text-brand-600 uppercase tracking-wide mb-1">{item.label}</div>
+                  <p className="text-sm text-stone-800 whitespace-pre-line">{item.value}</p>
+                </div>
+              ))}
             </div>
 
             <div className="flex gap-3">
-              <button onClick={() => setStep(3)} className="btn-secondary flex-1">
+              <button onClick={() => setStep(5)} className="btn-secondary flex-1">
                 Edit
               </button>
               <button

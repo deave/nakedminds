@@ -61,10 +61,12 @@ async function main() {
       userId: admin.id,
       year,
       month,
-      habitAdopt: "Read for 30 minutes every evening before bed",
-      habitRemove: "Checking email first thing in the morning",
-      focusChallenge:
-        "I'm working on delegating more at work instead of trying to do everything myself. It's uncomfortable but necessary for my growth as a leader.",
+      oneThing: "Delegate one project completely to a team member",
+      keyActions: "1. Identify a project to hand off\n2. Brief the team member\n3. Step back and only check in weekly",
+      firstStep: "Choose which project to delegate by Friday",
+      timeBlockDay: "Monday",
+      timeBlockTime: "9:00 AM",
+      definitionOfProgress: "One project is fully owned by someone else, and I haven't intervened for 2 weeks",
     },
   });
 
@@ -75,10 +77,12 @@ async function main() {
       userId: alice.id,
       year,
       month,
-      habitAdopt: "Write in my journal every morning for 10 minutes",
-      habitRemove: "Saying yes to things I don't actually want to do",
-      focusChallenge:
-        "I'm learning to set boundaries with family without feeling guilty. It's the hardest thing I've ever done but I know it's important for my mental health.",
+      oneThing: "Set clear boundaries with family",
+      keyActions: "1. Identify one boundary to set this week\n2. Practice saying no in low-stakes situations\n3. Journal about how it feels afterward",
+      firstStep: "Write down the one boundary I need to set most urgently",
+      timeBlockDay: "Wednesday",
+      timeBlockTime: "7:00 PM",
+      definitionOfProgress: "I've said no to at least 3 things I don't want to do without feeling guilty",
     },
   });
 
@@ -89,10 +93,12 @@ async function main() {
       userId: bob.id,
       year,
       month,
-      habitAdopt: "Take a 20-minute walk after lunch every day",
-      habitRemove: "Doom-scrolling social media during breaks",
-      focusChallenge:
-        "I'm trying to have more honest conversations with my partner about our finances. We've been avoiding the topic and it's creating tension.",
+      oneThing: "Have honest financial conversations with my partner",
+      keyActions: "1. Schedule a weekly money chat\n2. Prepare a simple budget overview\n3. Listen without getting defensive",
+      firstStep: "Propose a time for our first money chat this weekend",
+      timeBlockDay: "Saturday",
+      timeBlockTime: "10:00 AM",
+      definitionOfProgress: "We've had at least 3 money conversations and agreed on a shared budget",
     },
   });
 

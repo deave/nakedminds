@@ -21,9 +21,12 @@ interface Entry {
   id: string;
   year: number;
   month: number;
-  habitAdopt: string;
-  habitRemove: string;
-  focusChallenge: string;
+  oneThing: string;
+  keyActions: string;
+  firstStep: string;
+  timeBlockDay: string;
+  timeBlockTime: string;
+  definitionOfProgress: string;
   _count: { comments: number };
 }
 
@@ -217,29 +220,27 @@ export default function MemberProfilePage() {
             <div className="space-y-4">
               <div className="card p-4">
                 <div className="space-y-3">
-                  <div className="flex items-start gap-2">
-                    <span className="badge-adopt mt-0.5 flex-shrink-0">
-                      Adopt
-                    </span>
-                    <p className="text-sm text-stone-700">
-                      {selectedEntry.habitAdopt}
-                    </p>
+                  <div>
+                    <span className="text-xs font-semibold text-brand-600 uppercase tracking-wide">ONE Thing</span>
+                    <p className="text-sm font-medium text-stone-800 mt-0.5">{selectedEntry.oneThing}</p>
                   </div>
-                  <div className="flex items-start gap-2">
-                    <span className="badge-remove mt-0.5 flex-shrink-0">
-                      Remove
-                    </span>
-                    <p className="text-sm text-stone-700">
-                      {selectedEntry.habitRemove}
-                    </p>
-                  </div>
-                  <div className="bg-surface-50 rounded-lg p-3">
-                    <span className="badge-focus mb-1.5 inline-block">
-                      Focus
-                    </span>
-                    <p className="text-sm text-stone-700">
-                      {selectedEntry.focusChallenge}
-                    </p>
+                  <div className="bg-surface-50 rounded-lg p-3 space-y-2">
+                    <div>
+                      <span className="text-xs font-medium text-stone-500">Key Actions</span>
+                      <p className="text-sm text-stone-700 whitespace-pre-line">{selectedEntry.keyActions}</p>
+                    </div>
+                    <div>
+                      <span className="text-xs font-medium text-stone-500">First Step</span>
+                      <p className="text-sm text-stone-700">{selectedEntry.firstStep}</p>
+                    </div>
+                    <div>
+                      <span className="text-xs font-medium text-stone-500">Time Block</span>
+                      <p className="text-sm text-stone-700">{selectedEntry.timeBlockDay} — {selectedEntry.timeBlockTime}</p>
+                    </div>
+                    <div>
+                      <span className="text-xs font-medium text-stone-500">Definition of Progress</span>
+                      <p className="text-sm text-stone-700">{selectedEntry.definitionOfProgress}</p>
+                    </div>
                   </div>
                 </div>
               </div>
