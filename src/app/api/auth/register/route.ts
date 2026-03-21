@@ -7,6 +7,7 @@ const registerSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8, "Password must be at least 8 characters"),
   displayName: z.string().min(1, "Display name is required").max(50),
+  invitationCode: z.string().min(1, "Invitation code is required"),
 });
 
 export async function POST(req: NextRequest) {
@@ -21,7 +22,33 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { email, password, displayName } = parsed.data;
+    const { email, password, displayName, invitationCode } = parsed.data;
+
+    // Validate invitation code
+    const codeRecord = await prisma.invitationCode.findUnique({
+      where: { code: invitationCode.trim().toUpperCase() },
+    });
+
+    if (!codeRecord || !codeRecord.active) {
+      return NextResponse.json(
+        { error: "Invalid invitation code" },
+        { status: 400 }
+      );
+    }
+
+    if (codeRecord.expiresAt && codeRecord.expiresAt < new Date()) {
+      return NextResponse.json(
+        { error: "This invitation code has expired" },
+        { status: 400 }
+      );
+    }
+
+    if (codeRecord.uses >= codeRecord.maxUses) {
+      return NextResponse.json(
+        { error: "This invitation code has reached its usage limit" },
+        { status: 400 }
+      );
+    }
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
@@ -37,12 +64,23 @@ export async function POST(req: NextRequest) {
 
     const passwordHash = await hash(password, 12);
 
-    const user = await prisma.user.create({
-      data: {
-        email,
-        passwordHash,
-        displayName,
-      },
+    // Create user and increment code usage in a transaction
+    const user = await prisma.$transaction(async (tx) => {
+      const newUser = await tx.user.create({
+        data: {
+          email,
+          passwordHash,
+          displayName,
+          invitationCodeId: codeRecord.id,
+        },
+      });
+
+      await tx.invitationCode.update({
+        where: { id: codeRecord.id },
+        data: { uses: { increment: 1 } },
+      });
+
+      return newUser;
     });
 
     return NextResponse.json(

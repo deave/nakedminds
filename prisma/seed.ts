@@ -6,6 +6,19 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("Seeding database...");
 
+  // Create invitation codes
+  const defaultCode = await prisma.invitationCode.upsert({
+    where: { code: "NAKEDMINDS2026" },
+    update: {},
+    create: {
+      code: "NAKEDMINDS2026",
+      maxUses: 100,
+      active: true,
+    },
+  });
+
+  console.log(`Invitation code created: ${defaultCode.code}`);
+
   // Create admin user
   const adminPassword = await hash("password123", 12);
   const admin = await prisma.user.upsert({

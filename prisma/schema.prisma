@@ -19,23 +19,39 @@ enum NotificationType {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
-  passwordHash String
-  displayName  String
-  bio          String?
-  avatarUrl    String?
-  role         Role     @default(MEMBER)
-  onboarded    Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id               String   @id @default(uuid())
+  email            String   @unique
+  passwordHash     String
+  displayName      String
+  bio              String?
+  avatarUrl        String?
+  role             Role     @default(MEMBER)
+  onboarded        Boolean  @default(false)
+  invitationCodeId String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
+  invitationCode            InvitationCode? @relation("InvitationCodeUsers", fields: [invitationCodeId], references: [id])
   monthlyEntries            MonthlyEntry[]
   comments                  Comment[]
   conversationParticipants  ConversationParticipant[]
   sentMessages              Message[]
   notifications             Notification[]
   @@map("users")
+}
+
+model InvitationCode {
+  id        String    @id @default(cuid())
+  code      String    @unique
+  maxUses   Int       @default(1)
+  uses      Int       @default(0)
+  expiresAt DateTime?
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+
+  usedBy User[] @relation("InvitationCodeUsers")
+
+  @@map("invitation_codes")
 }
 
 model MonthlyEntry {
